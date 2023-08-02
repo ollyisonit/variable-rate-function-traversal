@@ -1,0 +1,29 @@
+// "oscillation_controller" is the name of the object that has oscillation controls
+// testcube.translateY is the attribute that is being oscilated
+
+float $currentFrame = `currentTime -q`;
+string $frequencyAttribute = "oscillation_controller.frequency";
+float $amp = oscillation_controller.amplitude;
+float $center = oscillation_controller.oscillationCenter;
+float $phase = oscillation_controller.phase;
+float $timeOffset = oscillation_controller.timeOffset;
+float $seed = oscillation_controller.seed;
+
+seed($seed);
+
+proc float riemann(float $frame, string $attribute, float $step) {
+    if ($frame < 0) {
+        $step = $step * -1;
+    }
+
+    float $t = 0;
+    float $result = 0;
+    
+    while (`abs $t` < `abs $frame`) {
+        $result += `getAttr -time $t $attribute` * $step;
+        $t += $step;
+    }
+    return $result;
+}
+
+testcube.translateY = $center + $amp * sin(riemann($currentFrame + $timeOffset, $frequencyAttribute, 1)/24 + $phase);
