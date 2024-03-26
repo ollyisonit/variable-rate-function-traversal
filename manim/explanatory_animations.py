@@ -22,7 +22,7 @@ def bad_solution(t):
 
 
 def good_solution(t):
-    # DONT FORGET TO FIX FOR FINAL EXPORT
+    # DONT FORGET TO MAKE SMALLER FOR FINAL EXPORT
     d = 0.05
     samples = [omega_func(x * d) for x in range(0, int(t / d))]
     return np.sin(np.trapz(samples, dx=d))
@@ -60,15 +60,16 @@ def build_animated_graph(
 def build_bouncing_ball(function: Callable[[float], float],
                         tracker: ValueTracker,
                         x_range=[-1, 1, 1],
-                        x_length=3,
+                        x_length=10 * DEFAULT_DOT_RADIUS,
                         y_range=[-2, 2, 1],
                         y_length=3) -> Mobject:
     dot_axes = Axes(x_range=x_range,
                     x_length=x_length,
                     y_range=y_range,
                     y_length=y_length).set_opacity(0)
-    dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(5).move_to(
-        dot_axes.coords_to_point(0, function(tracker.get_value()))))
+    dot = always_redraw(
+        lambda: Dot(fill_color=BLUE, radius=x_length / 2).move_to(
+            dot_axes.coords_to_point(0, function(tracker.get_value()))))
     return Group(dot_axes, dot)
 
 
@@ -88,7 +89,7 @@ class SimpleSine(Scene):
         )
 
         dot = build_bouncing_ball(lambda x: np.sin(x),
-                                  tracker).next_to(sine_graph, RIGHT, buff=0.2)
+                                  tracker).next_to(sine_graph, RIGHT, buff=1)
 
         graph_and_dot = Group(sine_graph, dot)
 
@@ -145,58 +146,38 @@ class MysteryFunction(Scene):
     def construct(self):
         tracker = ValueTracker(0.01)
 
-        sine_axes = Axes(x_range=[0, AXIS_LENGTH, 1],
-                         x_length=4,
-                         y_range=[-2, 2, 1],
-                         y_length=3,
-                         axis_config={
-                             'include_ticks': False,
-                             'include_tip': False
-                         }).shift(LEFT * 3)
+        f_graph = build_animated_graph(MathTex(r"f(t) =\text{?}"),
+                                       good_solution,
+                                       tracker,
+                                       x_range=[0, AXIS_LENGTH, 1],
+                                       x_length=4,
+                                       y_range=[-2, 2, 1],
+                                       y_length=3,
+                                       axis_config={
+                                           'include_ticks': False,
+                                           'include_tip': False
+                                       })
 
-        sine_graph = always_redraw(lambda: sine_axes.plot(
-            lambda x: good_solution(x), x_range=[0, tracker.get_value()]).
-                                   set_color(YELLOW))
-        sine_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).move_to(
-            sine_graph.get_end()))
+        ball = build_bouncing_ball(good_solution,
+                                   tracker,
+                                   x_length=10 * DEFAULT_DOT_RADIUS).next_to(
+                                       f_graph, RIGHT, buff=1)
 
-        dot_axes = Axes(x_range=[-1, 1, 1],
-                        x_length=2,
-                        y_range=[-2, 2, 1],
-                        y_length=3).next_to(sine_axes, RIGHT,
-                                            buff=0.1).set_opacity(0)
-        dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(5).move_to(
-            dot_axes.coords_to_point(0, good_solution(tracker.get_value()))))
+        oscillating_group = Group(f_graph, ball)
 
-        graph_and_dot = Group(sine_axes, sine_graph, sine_dot, dot_axes, dot)
+        omega_group = build_animated_graph(MathTex("\\omega (t)"),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           }).shift(LEFT * 3)
 
-        title = MathTex(r"f(t) =\text{?}").next_to(sine_axes, DOWN, buff=0.2)
-
-        oscillating_group = Group(graph_and_dot, title)
-
-        omega_axes = Axes(x_range=[0, AXIS_LENGTH, 1],
-                          x_length=4,
-                          y_range=[-7, 7, 1],
-                          y_length=3,
-                          axis_config={
-                              'include_ticks': False,
-                              'include_tip': False
-                          }).shift(LEFT * 3)
-
-        omega_graph = always_redraw(lambda: omega_axes.plot(
-            lambda x: omega_func(x), x_range=[0, tracker.get_value()]).
-                                    set_color(YELLOW))
-        omega_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).
-                                  move_to(omega_graph.get_end()))
-
-        omega_graph_and_dot = Group(omega_axes, omega_graph, omega_dot)
-        omega_title = MathTex("\\omega (t)").next_to(omega_axes,
-                                                     DOWN,
-                                                     buff=0.2)
-
-        omega_group = Group(omega_graph_and_dot, omega_title)
-
-        omega_group.next_to(oscillating_group, LEFT, buff=0.5)
+        oscillating_group.next_to(omega_group, RIGHT, buff=0.5)
 
         full_group = Group(omega_group, oscillating_group)
 
