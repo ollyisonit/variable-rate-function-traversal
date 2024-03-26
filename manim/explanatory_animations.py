@@ -21,11 +21,15 @@ def bad_solution(t):
     return np.sin(omega_func(t) * t)
 
 
-def good_solution(t):
+def good_solution_integrate(t):
     # DONT FORGET TO MAKE SMALLER FOR FINAL EXPORT
     d = 0.05
     samples = [omega_func(x * d) for x in range(0, int(t / d))]
-    return np.sin(np.trapz(samples, dx=d))
+    return np.trapz(samples, dx=d)
+
+
+def good_solution(t):
+    return np.sin(good_solution_integrate(t))
 
 
 def build_animated_graph(
@@ -267,6 +271,112 @@ class BadFunction(Scene):
                                                       buff=0.5)
 
         full_group = Group(omega_graph, graph_and_dot)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
+class BadFunctionExplanation(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        omega_graph = build_animated_graph(MathTex("\\omega (t)").scale(0.9),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           })
+
+        omega_graph_exp = build_animated_graph(
+            MathTex("\\omega (t) * t").scale(0.9),
+            lambda x: x * omega_func(x),
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-7, AXIS_LENGTH * omega_func(AXIS_LENGTH) + 10, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph, RIGHT, buff=0.5)
+
+        bad_graph = build_animated_graph(
+            MathTex(r"f(t) = sin(\omega(t) * t)").scale(0.8),
+            bad_solution,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph_exp, RIGHT, buff=0.5)
+
+        full_group = Group(omega_graph, omega_graph_exp, bad_graph)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
+class GoodFunctionExplanation(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        omega_graph = build_animated_graph(MathTex("\\omega (t)").scale(0.9),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           })
+
+        omega_graph_exp = build_animated_graph(
+            MathTex("g(t)").scale(0.9),
+            good_solution_integrate,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-7, AXIS_LENGTH * omega_func(AXIS_LENGTH) + 10, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph, RIGHT, buff=0.5)
+
+        bad_graph = build_animated_graph(
+            MathTex(r"f(t) = sin(g(t))").scale(0.8),
+            good_solution,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph_exp, RIGHT, buff=0.5)
+
+        full_group = Group(omega_graph, omega_graph_exp, bad_graph)
 
         full_group.move_to(ORIGIN, ORIGIN)
 
