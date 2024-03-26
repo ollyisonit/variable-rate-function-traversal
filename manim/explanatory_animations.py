@@ -28,37 +28,48 @@ def good_solution(t):
     return np.sin(np.trapz(samples, dx=d))
 
 
-class AnimateDrawnGraph:
+def build_animated_graph(
+        label: Mobject,
+        function: Callable[[float], float],
+        tracker: ValueTracker,
+        x_range: Sequence[float] = [-5, 5, 1],
+        x_length: float = 5,
+        y_range: Sequence[float] = [-5, 5, 1],
+        y_length: float = 5,
+        axis_config={
+            'include_ticks': False,
+            'include_tip': False
+        }) -> Mobject:
+    axes = Axes(x_range=x_range,
+                x_length=x_length,
+                y_range=y_range,
+                y_length=y_length,
+                axis_config=axis_config)
 
-    def __init__(self,
-                 label: Mobject,
-                 function: Callable[[float], float],
-                 tracker: ValueTracker,
-                 x_range: Sequence[float] = [-5, 5, 1],
-                 x_length: float = 5,
-                 y_range: Sequence[float] = [-5, 5, 1],
-                 y_length: float = 5) -> None:
-        axes = Axes(x_range=x_range,
+    graph = always_redraw(lambda: axes.plot(
+        function, x_range=[0, tracker.get_value()]).set_color(YELLOW))
+    dot = always_redraw(
+        lambda: Dot(fill_color=BLUE).scale(1).move_to(graph.get_end()))
+    graph_group = Group(axes, graph, dot)
+    if label != None:
+        title = label.next_to(axes, DOWN, buff=0.2)
+        graph_group = Group(graph_group, title)
+    return graph_group
+
+
+def build_bouncing_ball(function: Callable[[float], float],
+                        tracker: ValueTracker,
+                        x_range=[-1, 1, 1],
+                        x_length=3,
+                        y_range=[-2, 2, 1],
+                        y_length=3) -> Mobject:
+    dot_axes = Axes(x_range=x_range,
                     x_length=x_length,
                     y_range=y_range,
-                    y_length=y_length,
-                    axis_config={
-                        'include_ticks': False,
-                        'include_tip': False
-                    })
-
-        graph = always_redraw(lambda: axes.plot(
-            function, x_range=[0, tracker.get_value()]).set_color(YELLOW))
-        dot = always_redraw(
-            lambda: Dot(fill_color=BLUE).scale(1).move_to(graph.get_end()))
-        graph_group = Group(axes, graph, dot)
-        if label != None:
-            title = label.next_to(axes, DOWN, buff=0.2)
-            graph_group = Group(graph_group, title)
-        self.group = graph_group
-
-    def get_mObject(self):
-        return self.group
+                    y_length=y_length).set_opacity(0)
+    dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(5).move_to(
+        dot_axes.coords_to_point(0, function(tracker.get_value()))))
+    return Group(dot_axes, dot)
 
 
 class SimpleSine(Scene):
@@ -66,30 +77,20 @@ class SimpleSine(Scene):
     def construct(self):
         tracker = ValueTracker(0.01)
 
-        sine_axes = Axes(x_range=[0, AXIS_LENGTH, 1],
-                         x_length=5,
-                         y_range=[-2, 2, 1],
-                         y_length=3,
-                         axis_config={
-                             'include_ticks': False,
-                             'include_tip': False
-                         }).shift(LEFT * 3)
+        sine_graph = build_animated_graph(
+            None,
+            lambda x: np.sin(x),
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=5,
+            y_range=[-2, 2, 1],
+            y_length=3,
+        )
 
-        sine_graph = always_redraw(lambda: sine_axes.plot(
-            lambda x: np.sin(x), x_range=[0, tracker.get_value()]).set_color(
-                YELLOW))
-        sine_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).move_to(
-            sine_graph.get_end()))
+        dot = build_bouncing_ball(lambda x: np.sin(x),
+                                  tracker).next_to(sine_graph, RIGHT, buff=0.2)
 
-        dot_axes = Axes(x_range=[-1, 1, 1],
-                        x_length=3,
-                        y_range=[-2, 2, 1],
-                        y_length=3).next_to(sine_axes, RIGHT,
-                                            buff=0.1).set_opacity(0)
-        dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(5).move_to(
-            dot_axes.coords_to_point(0, np.sin(tracker.get_value()))))
-
-        graph_and_dot = Group(sine_axes, sine_graph, sine_dot, dot_axes, dot)
+        graph_and_dot = Group(sine_graph, dot)
 
         graph_and_dot.move_to(ORIGIN)
 
