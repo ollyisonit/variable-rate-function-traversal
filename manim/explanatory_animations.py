@@ -171,3 +171,72 @@ class MysteryFunction(Scene):
         self.play(tracker.animate.set_value(AXIS_LENGTH),
                   run_time=TIME_LENGTH,
                   rate_func=linear)
+
+
+class BadFunction(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        sine_axes = Axes(x_range=[0, AXIS_LENGTH, 1],
+                         x_length=4,
+                         y_range=[-2, 2, 1],
+                         y_length=3,
+                         axis_config={
+                             'include_ticks': False,
+                             'include_tip': False
+                         }).shift(LEFT * 3)
+
+        sine_graph = always_redraw(lambda: sine_axes.plot(
+            lambda x: bad_solution(x), x_range=[0, tracker.get_value()]).
+                                   set_color(YELLOW))
+        sine_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).move_to(
+            sine_graph.get_end()))
+
+        dot_axes = Axes(x_range=[-1, 1, 1],
+                        x_length=2,
+                        y_range=[-2, 2, 1],
+                        y_length=3).next_to(sine_axes, RIGHT,
+                                            buff=0.1).set_opacity(0)
+        dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(5).move_to(
+            dot_axes.coords_to_point(0, bad_solution(tracker.get_value()))))
+
+        graph_and_dot = Group(sine_axes, sine_graph, sine_dot, dot_axes, dot)
+
+        title = MathTex(r"f(t) = sin(\omega(t) * t)").scale(0.8).next_to(
+            sine_axes, DOWN, buff=0.2)
+
+        oscillating_group = Group(graph_and_dot, title)
+
+        omega_axes = Axes(x_range=[0, AXIS_LENGTH, 1],
+                          x_length=4,
+                          y_range=[-7, 7, 1],
+                          y_length=3,
+                          axis_config={
+                              'include_ticks': False,
+                              'include_tip': False
+                          }).shift(LEFT * 3)
+
+        omega_graph = always_redraw(lambda: omega_axes.plot(
+            lambda x: omega_func(x), x_range=[0, tracker.get_value()]).
+                                    set_color(YELLOW))
+        omega_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).
+                                  move_to(omega_graph.get_end()))
+
+        omega_graph_and_dot = Group(omega_axes, omega_graph, omega_dot)
+        omega_title = MathTex("\\omega (t)").scale(0.9).next_to(omega_axes,
+                                                                DOWN,
+                                                                buff=0.2)
+
+        omega_group = Group(omega_graph_and_dot, omega_title)
+
+        omega_group.next_to(oscillating_group, LEFT, buff=0.5)
+
+        full_group = Group(omega_group, oscillating_group)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
