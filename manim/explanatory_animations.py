@@ -73,6 +73,44 @@ def build_bouncing_ball(function: Callable[[float], float],
     return Group(dot_axes, dot)
 
 
+def build_side_by_side(functions: tuple[Mobject, Callable[[float], float]],
+                       tracker: ValueTracker) -> Mobject:
+    tracker = ValueTracker(0.01)
+
+    x_width: float = 8 / len(functions)
+    graphs: List[Mobject] = []
+
+    for (title, function) in functions:
+        f_graph = build_animated_graph(title,
+                                       function,
+                                       tracker,
+                                       x_range=[0, AXIS_LENGTH, 1],
+                                       x_length=x_width,
+                                       y_range=[-2, 2, 1],
+                                       y_length=3,
+                                       axis_config={
+                                           'include_ticks': False,
+                                           'include_tip': False
+                                       })
+        graphs.append(f_graph)
+
+    for i in range(1, len(graphs)):
+        graphs[i].next_to(graphs[i - 1], RIGHT, buff=0.2)
+
+    graphs_group = Group(graphs)
+
+    ball = build_bouncing_ball(function,
+                               tracker,
+                               x_length=10 * DEFAULT_DOT_RADIUS).next_to(
+                                   graphs_group, RIGHT, buff=1)
+
+    full_group = Group(graphs_group, ball)
+
+    full_group.move_to(ORIGIN, ORIGIN)
+
+    return full_group
+
+
 class SimpleSine(Scene):
 
     def construct(self):
