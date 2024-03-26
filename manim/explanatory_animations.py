@@ -1,3 +1,4 @@
+from typing import Sequence
 from manim import *
 
 AXIS_LENGTH = 8 * PI
@@ -25,6 +26,39 @@ def good_solution(t):
     d = 0.05
     samples = [omega_func(x * d) for x in range(0, int(t / d))]
     return np.sin(np.trapz(samples, dx=d))
+
+
+class AnimateDrawnGraph:
+
+    def __init__(self,
+                 label: Mobject,
+                 function: Callable[[float], float],
+                 tracker: ValueTracker,
+                 x_range: Sequence[float] = [-5, 5, 1],
+                 x_length: float = 5,
+                 y_range: Sequence[float] = [-5, 5, 1],
+                 y_length: float = 5) -> None:
+        axes = Axes(x_range=x_range,
+                    x_length=x_length,
+                    y_range=y_range,
+                    y_length=y_length,
+                    axis_config={
+                        'include_ticks': False,
+                        'include_tip': False
+                    })
+
+        graph = always_redraw(lambda: axes.plot(
+            function, x_range=[0, tracker.get_value()]).set_color(YELLOW))
+        dot = always_redraw(
+            lambda: Dot(fill_color=BLUE).scale(1).move_to(graph.get_end()))
+        graph_group = Group(axes, graph, dot)
+        if label != None:
+            title = label.next_to(axes, DOWN, buff=0.2)
+            graph_group = Group(graph_group, title)
+        self.group = graph_group
+
+    def get_mObject(self):
+        return self.group
 
 
 class SimpleSine(Scene):
