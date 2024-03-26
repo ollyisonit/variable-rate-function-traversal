@@ -1,5 +1,7 @@
 # Maya Variable Frequency Oscillation
 
+- ADD CONDA CONFIG
+
 A MEL script that allows you to keyframe the frequency of an oscillating object.
 
 ### How It Works
