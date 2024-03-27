@@ -3,6 +3,7 @@ from manim import *
 
 AXIS_LENGTH = 8 * PI
 TIME_LENGTH = 10
+RIEMANN_STEP = 0.01
 
 
 def omega_func(t):
@@ -23,7 +24,7 @@ def bad_solution(t):
 
 def good_solution_integrate(t):
     # DONT FORGET TO MAKE SMALLER FOR FINAL EXPORT
-    d = 0.05
+    d = RIEMANN_STEP
     samples = [omega_func(x * d) for x in range(0, int(t / d))]
     return np.trapz(samples, dx=d)
 
@@ -377,6 +378,76 @@ class GoodFunctionExplanation(Scene):
             }).next_to(omega_graph_exp, RIGHT, buff=0.5)
 
         full_group = Group(omega_graph, omega_graph_exp, bad_graph)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
+class SpeedVariation(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        omega_graph = build_animated_graph(MathTex("\\omega (t)").scale(0.9),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=3,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           })
+
+        oscillate_axes = Axes(
+            x_range=[0, good_solution_integrate(AXIS_LENGTH), 1],
+            x_length=6,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            })
+
+        oscillate_graph = always_redraw(
+            lambda: oscillate_axes.plot_parametric_curve(
+                lambda t: [good_solution_integrate(t),
+                           good_solution(t)],
+                t_range=[0, tracker.get_value()]).set_color(YELLOW))
+        oscillate_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(1).
+                                      move_to(oscillate_graph.get_end()))
+        oscillate_arrow = always_redraw(
+            lambda: oscillate_axes.plot_parametric_curve(
+                lambda t: [good_solution_integrate(t), 1.75],
+                t_range=[0, tracker.get_value()]).set_color(GREEN))
+        oscillate_arrowhead = always_redraw(
+            lambda: ArrowTriangleFilledTip(fill_color=GREEN).scale(0.7).rotate(
+                PI).move_to(oscillate_arrow.get_end()))
+        oscillate_arrowhead_title = always_redraw(
+            lambda: MathTex("\\omega (t)").scale(0.75).set_color(GREEN).
+            next_to(oscillate_arrowhead, np.array((0.4, 0.65, 0)), buff=0.1))
+        oscillate_title = MathTex("f(t)").next_to(oscillate_axes,
+                                                  DOWN,
+                                                  buff=0.2)
+        oscillate_group = Group(oscillate_axes, oscillate_arrow,
+                                oscillate_graph, oscillate_dot,
+                                oscillate_title, oscillate_arrowhead,
+                                oscillate_arrowhead_title)
+
+        oscillate_group.next_to(omega_graph, RIGHT, buff=0.5)
+
+        bouncing_ball = build_bouncing_ball(
+            good_solution, tracker,
+            x_length=10 * DEFAULT_DOT_RADIUS).next_to(oscillate_axes,
+                                                      RIGHT,
+                                                      buff=1)
+
+        full_group = Group(oscillate_group, omega_graph, bouncing_ball)
 
         full_group.move_to(ORIGIN, ORIGIN)
 
