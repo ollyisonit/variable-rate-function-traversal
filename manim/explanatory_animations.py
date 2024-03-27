@@ -1,9 +1,10 @@
 from typing import Sequence
 from manim import *
+from perlin_noise import PerlinNoise
 
 AXIS_LENGTH = 8 * PI
 TIME_LENGTH = 10
-RIEMANN_STEP = 0.4
+RIEMANN_STEP = 0.1
 
 
 def omega_func(t):
@@ -232,6 +233,117 @@ class MysteryFunction(Scene):
                   rate_func=linear)
 
 
+class MysteryFunctionLabeled(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        f_graph = build_animated_graph(
+            MathTex(r"f(t) =sin(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            good_solution,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            })
+
+        ball = build_bouncing_ball(good_solution,
+                                   tracker,
+                                   x_length=10 * DEFAULT_DOT_RADIUS).next_to(
+                                       f_graph, RIGHT, buff=1)
+
+        oscillating_group = Group(f_graph, ball)
+
+        omega_group = build_animated_graph(MathTex("\\omega (t)").scale(0.75),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           }).shift(LEFT * 3)
+
+        oscillating_group.next_to(omega_group, RIGHT, buff=0.5)
+
+        full_group = Group(omega_group, oscillating_group)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
+class NoiseFunctionLabeled(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+        noise = PerlinNoise()
+
+        def noise_func(x):
+            return 3 * noise(0.3 * good_solution_integrate(x))
+
+        f_graph = build_animated_graph(
+            MathTex(r"f(t) =noise(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            noise_func,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            })
+
+        ball = build_bouncing_ball(noise_func,
+                                   tracker,
+                                   x_length=10 * DEFAULT_DOT_RADIUS).next_to(
+                                       f_graph, RIGHT, buff=1)
+
+        oscillating_group = Group(f_graph, ball)
+
+        omega_graph = build_animated_graph(None,
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           }).shift(LEFT * 3)
+
+        omega_label = MathTex("\\omega (t)").scale(0.75).next_to(
+            omega_graph, DOWN)
+
+        omega_group = Group(omega_graph, omega_label)
+
+        oscillating_group.next_to(omega_group, RIGHT, buff=0.5)
+
+        omega_group.align_to(f_graph, UP)
+        ball.align_to(f_graph, UP)
+        omega_label.align_to(f_graph, DOWN).shift(UP * 0.24)
+
+        full_group = Group(omega_group, oscillating_group)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
 class BadFunction(Scene):
 
     def construct(self):
@@ -366,6 +478,59 @@ class GoodFunctionExplanation(Scene):
 
         bad_graph = build_animated_graph(
             MathTex(r"f(t) = sin(g(t))").scale(0.8),
+            good_solution,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph_exp, RIGHT, buff=0.5)
+
+        full_group = Group(omega_graph, omega_graph_exp, bad_graph)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
+class GoodFunctionExplanationLabeled(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+
+        omega_graph = build_animated_graph(MathTex("\\omega (t)").scale(0.9),
+                                           omega_func,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           })
+
+        omega_graph_exp = build_animated_graph(
+            MathTex("\int_{0}^t \omega (t) \, dt").scale(0.9),
+            good_solution_integrate,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-7, AXIS_LENGTH * omega_func(AXIS_LENGTH) + 10, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            }).next_to(omega_graph, RIGHT, buff=0.5)
+
+        bad_graph = build_animated_graph(
+            MathTex(r"f(t) = sin(\int_{0}^t \omega (t) \, dt)").scale(0.8),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
