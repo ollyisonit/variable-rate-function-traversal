@@ -3,7 +3,7 @@ from manim import *
 
 AXIS_LENGTH = 8 * PI
 TIME_LENGTH = 10
-RIEMANN_STEP = 0.01
+RIEMANN_STEP = 0.4
 
 
 def omega_func(t):
@@ -390,19 +390,25 @@ class GoodFunctionExplanation(Scene):
 class SpeedVariation(Scene):
 
     def construct(self):
-        tracker = ValueTracker(0.01)
+        tracker = ValueTracker(1)
 
-        omega_graph = build_animated_graph(MathTex("\\omega (t)").scale(0.9),
-                                           omega_func,
-                                           tracker,
-                                           x_range=[0, AXIS_LENGTH, 1],
-                                           x_length=3,
-                                           y_range=[-7, 7, 1],
-                                           y_length=3,
-                                           axis_config={
-                                               'include_ticks': False,
-                                               'include_tip': False
-                                           })
+        omega_graph_axes = build_animated_graph(
+            None,
+            omega_func,
+            tracker,
+            x_range=[0, AXIS_LENGTH + 1, 1],
+            x_length=3,
+            y_range=[-7, 7, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            })
+        omega_title = always_redraw(lambda: MathTex(
+            "\\omega (t) = ", f"{omega_func(tracker.get_value()):.2f}").scale(
+                0.9).next_to(omega_graph_axes, DOWN, buff=0.2))
+
+        omega_graph = Group(omega_graph_axes, omega_title)
 
         oscillate_axes = Axes(
             x_range=[0, good_solution_integrate(AXIS_LENGTH), 1],
@@ -428,9 +434,13 @@ class SpeedVariation(Scene):
         oscillate_arrowhead = always_redraw(
             lambda: ArrowTriangleFilledTip(fill_color=GREEN).scale(0.7).rotate(
                 PI).move_to(oscillate_arrow.get_end()))
-        oscillate_arrowhead_title = always_redraw(
-            lambda: MathTex("\\omega (t)").scale(0.75).set_color(GREEN).
-            next_to(oscillate_arrowhead, np.array((0.4, 0.65, 0)), buff=0.1))
+
+        oscillate_arrowhead_title = always_redraw(lambda: MathTex(
+            r"\omega (t)=",
+            f"{np.round(omega_func(tracker.get_value()), 2):.2f}",
+            r"\text{ units}/\text{s}",
+            font_size=25).set_color(GREEN).next_to(
+                oscillate_arrow, np.array((0.4, 0.65, 0)), buff=0.1))
         oscillate_title = MathTex("f(t)").next_to(oscillate_axes,
                                                   DOWN,
                                                   buff=0.2)
