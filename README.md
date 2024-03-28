@@ -45,7 +45,7 @@ And when we apply this animation to our oscillating object, we get the desired r
 ![alt text](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
 
 As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Lets set $\omega(t)$ to a constant function:
-$$ \omega(t) = \omega_1 $$
+$$\omega(t) = \omega_1$$
 Then $\int_{0}^t \omega (t) \\, dt$ evaluates as follows:
 $$\int_{0}^t \omega (t) \\, dt = \int_{0}^t \omega_1 \\, dt = \omega_1t$$
 So we end up with:
