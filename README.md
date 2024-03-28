@@ -32,11 +32,11 @@ However, we can also think of $\omega$ as setting the rate at which we traverse 
 
 This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as a velocity, which means we can integrate it to get a position. 
 
-If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
+If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \\, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \\, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
 
-$$ f(t) =sin(\int_{0}^t \omega (t) \, dt) $$
+$$ f(t) =sin(\int_{0}^t \omega (t) \\, dt) $$
 
-Now we can revisit our examples from before with our new definition for $f(t)$. If we look at how $\int_{0}^t \omega (t) \, dt$ changes over time, we see a smooth transition instead of the sharp one that $\omega (t) \cdot t$ yielded:
+Now we can revisit our examples from before with our new definition for $f(t)$. If we look at how $\int_{0}^t \omega (t) \\, dt$ changes over time, we see a smooth transition instead of the sharp one that $\omega (t) \cdot t$ yielded:
 
 ![alt text](assets/GoodFunctionExplanationLabeled_ManimCE_v0.18.0.gif)
 
@@ -46,17 +46,17 @@ And when we apply this animation to our oscillating object, we get the desired r
 
 As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Lets set $\omega(t)$ to a constant function:
 $$ \omega(t) = \omega_1 $$
-Then $\int_{0}^t \omega (t) \, dt$ evaluates as follows:
-$$\int_{0}^t \omega (t) \, dt = \int_{0}^t \omega_1 \, dt = \omega_1t$$
+Then $\int_{0}^t \omega (t) \\, dt$ evaluates as follows:
+$$\int_{0}^t \omega (t) \\, dt = \int_{0}^t \omega_1 \\, dt = \omega_1t$$
 So we end up with:
-$$f(t) =sin(\int_{0}^t \omega (t) \, dt) = sin(\omega_1t)$$
-Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=sin(\omega t)$ a special case of the more general function $ f(t) =sin(\int_{0}^t \omega (t) \, dt) $.
+$$f(t) =sin(\int_{0}^t \omega (t) \\, dt) = sin(\omega_1t)$$
+Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=sin(\omega t)$ a special case of the more general function $ f(t) =sin(\int_{0}^t \omega (t) \\, dt) $.
 
 ## Applications
 
 While I used $sin$ as an example, this general process applies to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
 
-$$ f(t) =g(\int_{0}^t \omega (t) \, dt) $$
+$$ f(t) =g(\int_{0}^t \omega (t) \\, dt) $$
 
 Here's an example using a noise function:
 
