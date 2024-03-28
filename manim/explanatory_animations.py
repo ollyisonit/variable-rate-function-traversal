@@ -306,7 +306,7 @@ class NoiseFunctionLabeled(Scene):
 
     def construct(self):
         tracker = ValueTracker(0.01)
-        noise = PerlinNoise()
+        noise = PerlinNoise(seed=420)
 
         def noise_func(x):
             return 3 * noise(0.3 * good_solution_integrate(x))
