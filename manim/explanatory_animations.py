@@ -7,11 +7,8 @@ TIME_LENGTH = 10
 RIEMANN_STEP = 0.01
 
 
-def omega_func(t):
-    a = 3 * PI
-    b = 5 * PI
-    f1 = 1
-    f2 = 5
+def piecewise(a, b, f1, f2, t):
+    """Piecewise function that is constant until (a, f1), then ramps to (b, f2)"""
     if (t < a):
         return f1
     if t > b:
@@ -19,15 +16,27 @@ def omega_func(t):
     return ((f2 - f1) / (b - a)) * (t - a) + f1
 
 
+def omega_func(t):
+    return piecewise(3 * PI, 5 * PI, 1, 5, t)
+
+
 def bad_solution(t):
     return np.sin(omega_func(t) * t)
 
 
-def good_solution_integrate(t):
+def integrate(t, func: Callable[[float], float]):
     # DONT FORGET TO MAKE SMALLER FOR FINAL EXPORT
     d = RIEMANN_STEP
-    samples = [omega_func(x * d) for x in range(0, int(t / d))]
+    samples = [func(x * d) for x in range(0, int(t / d))]
     return np.trapz(samples, dx=d)
+
+
+def good_solution_integrate(t):
+    return integrate(t, omega_func)
+    # DONT FORGET TO MAKE SMALLER FOR FINAL EXPORT
+    # d = RIEMANN_STEP
+    # samples = [omega_func(x * d) for x in range(0, int(t / d))]
+    # return np.trapz(samples, dx=d)
 
 
 def good_solution(t):
@@ -139,9 +148,9 @@ class SimpleSine(Scene):
 
         graph_and_dot.move_to(ORIGIN)
 
-        title = MathTex(r"f(t)=sin(\omega * t)").next_to(graph_and_dot,
-                                                         DOWN,
-                                                         buff=0.2)
+        title = MathTex(r"f(t)=sin(\omega t)").next_to(graph_and_dot,
+                                                       DOWN,
+                                                       buff=0.2)
 
         title2 = MathTex(r"\omega = 1").next_to(title, DOWN)
 
@@ -192,7 +201,7 @@ class MysteryFunction(Scene):
     def construct(self):
         tracker = ValueTracker(0.01)
 
-        f_graph = build_animated_graph(MathTex(r"f(t) =sin(g(t))"),
+        f_graph = build_animated_graph(MathTex(r"f(t)"),
                                        good_solution,
                                        tracker,
                                        x_range=[0, AXIS_LENGTH, 1],
@@ -355,13 +364,78 @@ class NoiseFunctionLabeled(Scene):
                   rate_func=linear)
 
 
+class NoiseFunctionBounce(Scene):
+
+    def construct(self):
+        tracker = ValueTracker(0.01)
+        noise = PerlinNoise(seed=15)
+
+        def bounce(t: float) -> float:
+            return piecewise(4 * PI - 0.2, 4 * PI + 0.2, 2, -2, t)
+
+        def noise_func(x: float) -> float:
+            return 3 * noise(0.3 * integrate(x, bounce))
+
+        f_graph = build_animated_graph(
+            MathTex(r"f(t) =noise(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            noise_func,
+            tracker,
+            x_range=[0, AXIS_LENGTH, 1],
+            x_length=4,
+            y_range=[-2, 2, 1],
+            y_length=3,
+            axis_config={
+                'include_ticks': False,
+                'include_tip': False
+            })
+
+        ball = build_bouncing_ball(noise_func,
+                                   tracker,
+                                   x_length=10 * DEFAULT_DOT_RADIUS).next_to(
+                                       f_graph, RIGHT, buff=1)
+
+        oscillating_group = Group(f_graph, ball)
+
+        omega_graph = build_animated_graph(None,
+                                           bounce,
+                                           tracker,
+                                           x_range=[0, AXIS_LENGTH, 1],
+                                           x_length=4,
+                                           y_range=[-7, 7, 1],
+                                           y_length=3,
+                                           axis_config={
+                                               'include_ticks': False,
+                                               'include_tip': False
+                                           }).shift(LEFT * 3)
+
+        omega_label = MathTex("\\omega (t)").scale(0.75).next_to(
+            omega_graph, DOWN)
+
+        omega_group = Group(omega_graph, omega_label)
+
+        oscillating_group.next_to(omega_group, RIGHT, buff=0.5)
+
+        omega_group.align_to(f_graph, UP)
+        ball.align_to(f_graph, UP)
+        omega_label.align_to(f_graph, DOWN).shift(UP * 0.24)
+
+        full_group = Group(omega_group, oscillating_group)
+
+        full_group.move_to(ORIGIN, ORIGIN)
+
+        self.add(full_group)
+        self.play(tracker.animate.set_value(AXIS_LENGTH),
+                  run_time=TIME_LENGTH,
+                  rate_func=linear)
+
+
 class BadFunction(Scene):
 
     def construct(self):
         tracker = ValueTracker(0.01)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(\omega(t) * t)").scale(0.8),
+            MathTex(r"f(t) = sin(\omega(t) \cdot t)").scale(0.8),
             bad_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -422,7 +496,7 @@ class BadFunctionExplanation(Scene):
                                            })
 
         omega_graph_exp = build_animated_graph(
-            MathTex("g(t) = \\omega (t) * t").scale(0.9),
+            MathTex(r"\omega (t) \cdot t").scale(0.9),
             lambda x: x * omega_func(x),
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -435,7 +509,7 @@ class BadFunctionExplanation(Scene):
             }).next_to(omega_graph, RIGHT, buff=0.5)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(g(t))").scale(0.8),
+            MathTex(r"f(t) = sin(\omega (t) \cdot t)").scale(0.8),
             bad_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
