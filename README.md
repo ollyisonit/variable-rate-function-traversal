@@ -16,17 +16,17 @@ Now we have a new question: how should we define $f(t)$? The first thing we coul
 
 ![alt text](assets/BadFunction_ManimCE_v0.18.0.gif)
 
-When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to. But as soon as $\omega (t)$ starts changing, $f(t)$ starts oscillating much faster than it should for the current $\omega$ value. Then it abruptly slows down once $\omega$ becomes constant again. To understand why this happens, we can look at how $\omega(t) \cdot t$ changes over time:
+When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to. But as soon as $\omega (t)$ starts changing, $f(t)$ starts oscillating much faster than it should for the current $\omega$ value. Then, it abruptly slows down once $\omega$ becomes constant again. To understand why this happens, we can look at how $\omega(t) \cdot t$ changes over time:
 
 ![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
-When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model this sort of motion when $\omega$ is constant. In order to vary $\omega$ over time, we're going to need to find a different function.
+When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. In order to vary $\omega$ over time, we're going to need to find a different function.
 
-In order to do this, it can be helpful to think more closely about the effect that $\omega$ has on $f(t)$. One way to think about $\omega$ is that it controls the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
+In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $f(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
 ![alt text](assets/ExpandContract_ManimCE_v0.18.0.gif)
 
-However, we can also think of $\omega$ as setting the speed at which we traverse the horizontal axis when evaluating $f(t)$. The graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
+However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $f(t)$. The graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
 
 ![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
