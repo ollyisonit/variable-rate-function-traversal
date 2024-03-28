@@ -1,6 +1,6 @@
 # Variable Frequency Oscillation
 
-An equation for varying the frequency of an oscillating function over time, and a Maya expression that implements it.
+A function for varying the frequency of an oscillating function over time, and a Maya expression that implements it.
 
 ## The Function
 
@@ -12,7 +12,7 @@ This works fine when $\omega$ is constant, but what if we want to make the objec
 
 ![alt text](assets/MysteryFunction_ManimCE_v0.18.0.gif)
 
-Now we have a new question: how should we define $f(t)$? The first thing we could try is plugging $\omega (t)$ into the equation we had before, which would give us $f(t) = sin(\omega (t) \cdot t)$. However, doing so gives us some unwanted behavior:
+Now we have a new question: how should we define $f(t)$? The first thing we could try is plugging $\omega (t)$ into the function we had before, which would give us $f(t) = sin(\omega (t) \cdot t)$. However, doing so gives us some unwanted behavior:
 
 ![alt text](assets/BadFunction_ManimCE_v0.18.0.gif)
 
@@ -20,19 +20,19 @@ When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to
 
 ![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
-When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a signficiant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model this sort of motion when $\omega$ is constant. In order to vary $\omega$ over time, we're going to need to find a different function.
+When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model this sort of motion when $\omega$ is constant. In order to vary $\omega$ over time, we're going to need to find a different function.
 
 In order to do this, it can be helpful to think more closely about the effect that $\omega$ has on $f(t)$. One way to think about $\omega$ is that it controls the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
 ![alt text](assets/ExpandContract_ManimCE_v0.18.0.gif)
 
-However, we can also think of $\omega$ as setting the speed we travel along the horizontal axis when evaluating $f(t)$. Instead of increasing our oscillation speed by compressing the curve and moving along the horizontal axis at a constant rate, we can increase our oscillation speed by keeping $f(t)$ the same but changing the rate at which we traverse it. The graph of $f(t)$ is represented differently, but the final outcome for the oscillating object is the same:
+However, we can also think of $\omega$ as setting the speed at which we traverse the horizontal axis when evaluating $f(t)$. The graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
 
 ![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
 This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as a velocity, which means we can integrate it to get a position. 
 
-If $\omega (t)$ represents the rate at which we're travelling along the horizontal axis, then $\int_{0}^t \omega (t) \, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
+If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
 
 $$ f(t) =sin(\int_{0}^t \omega (t) \, dt) $$
 
