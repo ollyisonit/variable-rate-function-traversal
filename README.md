@@ -1,6 +1,6 @@
 # Variable Frequency Oscillation
 
-A function for varying the frequency of an oscillating function over time, and a Maya expression that implements it.
+A function for varying the frequency of an oscillating function over time, some of its applications, and a Maya expression that implements it.
 
 ## The Function
 
