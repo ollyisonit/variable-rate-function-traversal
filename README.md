@@ -20,7 +20,7 @@ When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to
 
 ![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
-When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. In order to vary $\omega$ over time, we're going to need to find a different function.
+When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. If we want to vary $\omega$ over time, we're going to need to find a different function.
 
 In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $f(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
@@ -50,11 +50,11 @@ Then $\int_{0}^t \omega (t) \\, dt$ evaluates as follows:
 $$\int_{0}^t \omega (t) \\, dt = \int_{0}^t \omega_1 \\, dt = \omega_1t$$
 So we end up with:
 $$f(t) =sin(\int_{0}^t \omega (t) \\, dt) = sin(\omega_1t)$$
-Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=sin(\omega t)$ a special case of the more general function $f(t) =sin(\int_{0}^t \omega (t) \\, dt)$.
+Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=sin(\omega t)$ a special case of the more general function $f(t) =sin(\int_{0}^t \omega (t) \\, dt)$ when $\omega(t)$ is constant.
 
 ## Applications
 
-While I used $sin$ as an example, this general process applies to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
+While I used $sin$ as an example, this solution can apply to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
 
 $$f(t) =g(\int_{0}^t \omega (t) \\, dt)$$
 
