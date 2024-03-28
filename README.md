@@ -63,3 +63,5 @@ Here's an example using a noise function:
 ![alt text](assets/NoiseFunctionLabeled_ManimCE_v0.18.0.gif)
 
 Another interesting property of this method is that negative $\omega$ values will reverse the traversal direction of $g(t)$, which can be used to create symmetry:
+
+![alt text](assets/NoiseFunctionBounce_ManimCE_v0.18.0.gif)
