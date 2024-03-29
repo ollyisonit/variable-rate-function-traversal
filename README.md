@@ -65,3 +65,15 @@ Here's an example using a noise function:
 Another interesting property of this method is that negative $\omega$ values will reverse the traversal direction of $g(t)$, which can be used to create symmetry:
 
 ![alt text](assets/NoiseFunctionBounce_ManimCE_v0.18.0.gif)
+
+Finally, here's an example of how I used this method in my short film [Whittled Down](https://whittleddownfilm.ollyglenn.com). I used a noise function to make the creature's teeth undulate, then applied this method to make them move faster right before it strikes.
+
+![alt text](assets/ClockyRearUpDemo.gif)
+
+## Implementation
+
+Next talk about implementing in Maya (Riemann sum basically) performance concerns, baking, and caching.
+
+Add a link to the interactive desmos graph somewhere
+
+Make sure the expression is presentable 
