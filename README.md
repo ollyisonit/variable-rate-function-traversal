@@ -16,23 +16,23 @@ Now we have a new question: how should we define $f(t)$? The first thing we coul
 
 ![alt text](assets/BadFunction_ManimCE_v0.18.0.gif)
 
-When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to. But as soon as $\omega (t)$ starts changing, $f(t)$ starts oscillating much faster than it should for the current $\omega$ value. Then, it abruptly slows down once $\omega$ becomes constant again. To understand why this happens, we can look at how $\omega(t) \cdot t$ changes over time:
+When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to. But as soon as $\omega (t)$ starts changing, $f(t)$ starts oscillating much faster than it should for the current $\omega$ value. Then, it abruptly slows down once $\omega (t)$ becomes constant again. To understand why this happens, we can look at how $\omega(t) \cdot t$ changes over time:
 
 ![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
 When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = \sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. If we want to vary $\omega$ over time, we're going to need to find a different function.
 
-In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $f(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
+In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $\sin(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
 ![alt text](assets/ExpandContract_ManimCE_v0.18.0.gif)
 
-However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $f(t)$. This graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
+However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $\sin(t)$. This graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
 
 ![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
 This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as a velocity, which means we can integrate it to get a position. 
 
-If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \\, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \\, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
+If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \\, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \\, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$ at time $t$. In other words, it's our solution:
 
 $$ f(t) =\sin(\int_{0}^t \omega (t) \\, dt) $$
 
@@ -78,11 +78,11 @@ This expression works by querying the value of the `frequency` attribute on ever
 
 Unfortunately, this method creates some major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
 
-$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} = O(n)$$
+$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} = O(n^2)$$
 
-The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the performance effects this expression would have on the rest of the project. However, that doesn't do anything to speed up the expression while it's actually running.
+The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the performance effects this expression would have on the rest of the scene. However, that doesn't do anything to speed up the expression while it's actually running.
 
-This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all animations in the scene.
+This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all cacheable animations in the scene.
 
 A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached and only recalculated when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than fifteen seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
 
@@ -94,4 +94,4 @@ This solution can then be generalized to any function that animates over time. F
 
 The file `oscillate-demo.ma` contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (t) \\, dt$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
 
-[If you would like to explore this function interactively, I have built a interactive demo using Desmos](https://www.desmos.com/calculator/jrbopevuwd)
+[If you would like to explore this function interactively, I have built a interactive demo using Desmos!](https://www.desmos.com/calculator/jrbopevuwd)
