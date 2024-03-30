@@ -101,3 +101,7 @@ This has applications including dynamic control of the frequency of noise functi
 The file `oscillate-demo.ma` contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (x) \\, dx$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
 
 [If you would like to explore this function interactively, I have built a interactive demo using Desmos!](https://www.desmos.com/calculator/jrbopevuwd)
+
+----
+
+Animations created using the [manim library](https://www.manim.community/)
