@@ -44,7 +44,7 @@ And when we apply this function to our oscillating object, we get the desired re
 
 ![alt text](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
 
-As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Lets make $\omega(t)$ a constant function:
+As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Let's make $\omega(t)$ a constant function:
 $$\omega(t) = \omega_1$$
 Then $\int_{0}^t \omega (x) \\, dx$ evaluates as follows:
 $$\int_{0}^t \omega (x) \\, dx = \int_{0}^t \omega_1 \\, dx = \omega_1t$$
@@ -74,7 +74,7 @@ Finally, here's an example of how I used this function in my short film [Whittle
 
 The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube's oscillation.
 
-Lets map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (x) \\, dx)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
+Let's map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (x) \\, dx)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
 
 The expression in this scene works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (x) \\, dx$.
 
