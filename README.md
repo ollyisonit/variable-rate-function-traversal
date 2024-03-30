@@ -6,29 +6,29 @@ A method for changing the rate at which a function (such as an animation curve) 
 
 Let's say we have a function $f(t)$ that we're using to animate the position of an object over time. If we wanted to make the object bounce up and down, we could model that using $f(t) = \sin(\omega t)$, where $t$ is the current time and $\omega$ is the angular frequency (which defines how fast the object oscillates):
 
-![alt text](assets/SimpleSine_ManimCE_v0.18.0.gif)
+![Animated sine function controlling oscillating circle](assets/SimpleSine_ManimCE_v0.18.0.gif)
 
 This works fine when $\omega$ is constant, but what if we want to make the object speed up and slow down as it wiggles? Instead of a constant $\omega$, we would need a function $\omega (t)$ that defines what the angular frequency should be at a given time:
 
-![alt text](assets/MysteryFunction_ManimCE_v0.18.0.gif)
+![Sinusoidal function where frequency varies over time, causing it to oscillate faster. Actual mechanics of function not specified.](assets/MysteryFunction_ManimCE_v0.18.0.gif)
 
 Now we have a new question: how should we define $f(t)$? The first thing we could try is plugging $\omega (t)$ into the function we had before, which would give us $f(t) = \sin(\omega (t) \cdot t)$. However, doing so gives us some unwanted behavior:
 
-![alt text](assets/BadFunction_ManimCE_v0.18.0.gif)
+![Sinusoidal function that oscillates as expected at first, but then begins to oscillate wildly once omega starts increasing.](assets/BadFunction_ManimCE_v0.18.0.gif)
 
 When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to. But as soon as $\omega (t)$ starts changing, $f(t)$ starts oscillating much faster than it should for the current $\omega$ value. Then, it abruptly slows down once $\omega (t)$ becomes constant again. To understand why this happens, we can look at how $\omega(t) \cdot t$ changes over time:
 
-![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
+![Series of graphs illustrating the dramatic increase in speed that happens when both t and omega(t) are increasing at the same time.](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
 When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = \sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. If we want to vary $\omega$ over time, we're going to need to find a different function.
 
 In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $\sin(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
-![alt text](assets/ExpandContract_ManimCE_v0.18.0.gif)
+![Animation of sine curve expanding and contracting with changing omega value.](assets/ExpandContract_ManimCE_v0.18.0.gif)
 
 However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $\sin(t)$. This graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
 
-![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
+![Graph where sine curve is uniformly shaped, but the omega value increases the rate of oscillation by causing the function to be traversed faster.](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
 This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as the velocity of traversal, which means we can integrate it to get a position. 
 
@@ -38,11 +38,11 @@ $$ f(t) =\sin(\int_{0}^t \omega (x) \\, dx) $$
 
 Now we can revisit our examples from before with our new definition for $f(t)$. If we look at how $\int_{0}^t \omega (x) \\, dx$ changes over time, we see a smooth transition instead of the sharp one that $\omega (t) \cdot t$ yielded:
 
-![alt text](assets/GoodFunctionExplanationLabeled_ManimCE_v0.18.0.gif)
+![Animation of the smooth increase in the integral of omega(t) as omega(t) increases](assets/GoodFunctionExplanationLabeled_ManimCE_v0.18.0.gif)
 
 And when we apply this function to our oscillating object, we get the desired result:
 
-![alt text](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
+![Animation of sine function with increasing frequency as defined by f(t)](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
 
 As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Let's make $\omega(t)$ a constant function:
 $$\omega(t) = \omega_1$$
@@ -60,19 +60,21 @@ $$f(t) =g(\int_{0}^t \omega (x) \\, dx)$$
 
 Here's an example using a noise function:
 
-![alt text](assets/NoiseFunctionLabeled_ManimCE_v0.18.0.gif)
+![Example of noise function with increasing frequency](assets/NoiseFunctionLabeled_ManimCE_v0.18.0.gif)
 
 Another interesting property of this function is that negative $\omega$ values will reverse the traversal direction of $g(t)$, which can be used to create symmetry:
 
-![alt text](assets/NoiseFunctionBounce_ManimCE_v0.18.0.gif)
+![Example of noise function that reverses halfway through, creating symmetrical curve](assets/NoiseFunctionBounce_ManimCE_v0.18.0.gif)
 
 Finally, here's an example of how I used this function in my short film [Whittled Down](https://whittleddownfilm.ollyglenn.com). I used a noise function to make the creature's teeth undulate, then applied this function to make them move faster right before the creature strikes.
 
-![alt text](assets/ClockyRearUpDemo.gif)
+![Shot of clock monster rearing up to strike toward the camera. The teeth in its mouth undulate back and forth, and their motion accelerates leading up to the strike.](assets/ClockyRearUpDemo.gif)
 
 ## Implementation
 
 The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube's oscillation.
+
+![Cube in Maya scene that oscillates quickly, then slows down.](assets/VariableFrequencyMayaExample.gif)
 
 Let's map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (x) \\, dx)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
 
