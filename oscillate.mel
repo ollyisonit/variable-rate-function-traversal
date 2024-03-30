@@ -7,9 +7,6 @@ float $amp = oscillation_controller.amplitude;
 float $center = oscillation_controller.oscillationCenter;
 float $phase = oscillation_controller.phase;
 float $timeOffset = oscillation_controller.timeOffset;
-float $seed = oscillation_controller.seed;
-
-seed($seed);
 
 proc float riemann(float $frame, string $attribute, float $step) {
     if ($frame < 0) {
@@ -26,4 +23,4 @@ proc float riemann(float $frame, string $attribute, float $step) {
     return $result;
 }
 
-testcube.translateY = $center + $amp * sin(riemann($currentFrame + $timeOffset, $frequencyAttribute, 1)/24 + $phase);
+cube.translateY = $center + $amp * sin(riemann($currentFrame + $timeOffset, $frequencyAttribute, 1)/24 + $phase);

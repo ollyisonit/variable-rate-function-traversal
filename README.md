@@ -72,7 +72,23 @@ Finally, here's an example of how I used this method in my short film [Whittled 
 
 ## Implementation
 
-Next talk about implementing in Maya (Riemann sum basically) performance concerns, baking, and caching.
+The Maya scene `oscillate-demo.ma` contains an example of how one could implement the variable frequency oscillation function using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
+
+This expression works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
+
+This expression works, but it has major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
+
+$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} $$
+
+The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the effects the performance of this expression would have on the rest of the project, but that doesn't do anything to speed up the expression while it's actually running.
+
+This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all animations in the scene.
+
+A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached and only recalculated when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than ten seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
+
+## Summary
+
+
 
 Add a link to the interactive desmos graph somewhere
 
