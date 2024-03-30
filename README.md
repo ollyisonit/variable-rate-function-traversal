@@ -1,8 +1,8 @@
-# Variable Frequency Oscillation
+# Variable Rate Function Traversal
 
-A function for varying the frequency of an oscillating function over time, some of its applications, and a Maya expression that implements it.
+A method for changing the rate at which a function (such as an animation curve) is traversed over time, some of its applications, and a Maya expression that implements it.
 
-## The Function
+## How it Works
 
 Let's say we have a function $f(t)$ that we're using to animate the position of an object over time. If we wanted to make the object bounce up and down, we could model that using $f(t) = \sin(\omega t)$, where $t$ is the current time and $\omega$ is the angular frequency (which defines how fast the object oscillates):
 
@@ -30,7 +30,7 @@ However, we can also think of $\omega$ as setting the rate at which we traverse 
 
 ![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
-This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as a velocity, which means we can integrate it to get a position. 
+This way of thinking about $\omega$ is a bit more convoluted than the stretchiness model, but it creates an interesting property: we are now thinking of $\omega$ as the velocity of traversal, which means we can integrate it to get a position. 
 
 If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \\, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \\, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$ at time $t$. In other words, it's our solution:
 
@@ -52,9 +52,9 @@ So we end up with:
 $$f(t) =\sin(\int_{0}^t \omega (t) \\, dt) = \sin(\omega_1t)$$
 Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=\sin(\omega t)$ a special case of the more general function $f(t) =\sin(\int_{0}^t \omega (t) \\, dt)$ for constant $\omega(t)$.
 
-## Applications
+## The General Solution and Some Applications
 
-While I used $\sin$ as an example, this solution can apply to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
+While I used $\sin$ as an example, the above solution can be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
 
 $$f(t) =g(\int_{0}^t \omega (t) \\, dt)$$
 
@@ -72,7 +72,7 @@ Finally, here's an example of how I used this method in my short film [Whittled 
 
 ## Implementation
 
-The Maya scene `oscillate-demo.ma` contains an example of how one could implement the variable frequency oscillation function using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
+The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
 
 This expression works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
 
