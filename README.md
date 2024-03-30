@@ -54,7 +54,7 @@ Which is the same function that we started with when $\omega$ was constant. This
 
 ## The General Solution and Some Applications
 
-While I used $\sin$ as an example, the above solution can be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
+While I used $\sin$ as an example, the above solution can be generalized to any function that animates over time. For a function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
 
 $$f(t) =g(\int_{0}^t \omega (x) \\, dx)$$
 
@@ -96,7 +96,7 @@ A more performant solution to this problem would be to implement a system that a
 
 The function $f_a(t) = \sin(\omega t)$, where $\omega$ is the angular frequency and $t$ is time, can be used to model oscillating motion. However, it only works if $\omega$ is constant. If $\omega$ is instead a function $\omega (t)$, then the motion is represented by $f_b(t) =\sin(\int_{0}^t \omega (x) \\, dx)$. The original function, $f_a(t) = \sin(\omega t)$, is a special case of $f_b(t)$ for constant $\omega (t)$.
 
-This solution can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function: 
+This solution can then be generalized to any function that animates over time. For a function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function: 
 $$f(t) =g(\int_{0}^t \omega (x) \\, dx)$$ 
 This has applications including dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and the reversal of animations in real-time.
 
