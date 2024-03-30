@@ -62,17 +62,17 @@ Here's an example using a noise function:
 
 ![alt text](assets/NoiseFunctionLabeled_ManimCE_v0.18.0.gif)
 
-Another interesting property of this method is that negative $\omega$ values will reverse the traversal direction of $g(t)$, which can be used to create symmetry:
+Another interesting property of this function is that negative $\omega$ values will reverse the traversal direction of $g(t)$, which can be used to create symmetry:
 
 ![alt text](assets/NoiseFunctionBounce_ManimCE_v0.18.0.gif)
 
-Finally, here's an example of how I used this method in my short film [Whittled Down](https://whittleddownfilm.ollyglenn.com). I used a noise function to make the creature's teeth undulate, then applied this method to make them move faster right before it strikes.
+Finally, here's an example of how I used this function in my short film [Whittled Down](https://whittleddownfilm.ollyglenn.com). I used a noise function to make the creature's teeth undulate, then applied this function to make them move faster right before the creature strikes.
 
 ![alt text](assets/ClockyRearUpDemo.gif)
 
 ## Implementation
 
-The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
+The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube.translateY`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
 
 Lets map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
 
