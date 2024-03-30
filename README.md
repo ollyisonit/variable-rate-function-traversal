@@ -72,27 +72,31 @@ Finally, here's an example of how I used this function in my short film [Whittle
 
 ## Implementation
 
-The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
+The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube's oscillation.
 
 Lets map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
 
 The expression in this scene works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
 
-Unfortunately, this method creates some major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
+Unfortunately, this method creates a major performance drawbacks: it requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
 
 $$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} = O(n^2)$$
 
-The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the performance effects this expression would have on the rest of the scene. However, that doesn't do anything to speed up the expression while it's actually running.
+In simpler terms, the expression gets really slow for big frame numbers.
+
+The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the performance effects this expression would have on the rest of the scene. However, that doesn't do anything to speed up the expression while it's running.
 
 This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all cacheable animations in the scene.
 
-A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached and only recalculated when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than fifteen seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
+A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached, only recalculating them when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than fifteen seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
 
 ## Summary
 
 The function $f_a(t) = \sin(\omega t)$, where $\omega$ is the angular frequency and $t$ is time, can be used to model oscillating motion. However, it only works if $\omega$ is constant. If $\omega$ is instead a function $\omega (t)$, then the motion is represented by $f_b(t) =\sin(\int_{0}^t \omega (t) \\, dt)$. The original function, $f_a(t) = \sin(\omega t)$, is a special case of $f_b(t)$ for constant $\omega (t)$.
 
-This solution can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. This has applications including dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and the reversal of animations in real-time.
+This solution can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function: 
+$$f(t) =g(\int_{0}^t \omega (t) \\, dt)$$ 
+This has applications including dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and the reversal of animations in real-time.
 
 The file `oscillate-demo.ma` contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (t) \\, dt$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
 
