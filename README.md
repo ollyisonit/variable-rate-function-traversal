@@ -78,9 +78,9 @@ Lets map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t
 
 The expression in this scene works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (x) \\, dx$.
 
-Unfortunately, this method creates a major performance drawbacks: it requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (x) \\, dx$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
+Unfortunately, this method creates a major performance drawback: it requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (x) \\, dx$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
 
-$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} = O(n^2)$$
+$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} \Rightarrow O(n^2)$$
 
 In simpler terms, the expression gets really slow for big frame numbers.
 
