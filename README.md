@@ -2,7 +2,7 @@
 
 A method for changing the rate at which a function (such as an animation curve) is traversed over time, some of its applications, and a Maya expression that implements it.
 
-## How it Works
+## The Setup
 
 Let's say we have a function $f(t)$ that we're using to animate the position of an object over time. If we wanted to make the object bounce up and down, we could model that using $f(t) = \sin(\omega t)$, where $t$ is the current time and $\omega$ is the angular frequency (which defines how fast the object oscillates):
 
@@ -72,9 +72,11 @@ Finally, here's an example of how I used this method in my short film [Whittled 
 
 ## Implementation
 
-The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
+The Maya scene `oscillate-demo.ma` contains an example of how one could implement variable rate function traversal using a Maya expression. The `oscillation_controller` curve has attributes `frequency`, `amplitude`, `oscillationCenter`, `phase`, and `timeOffset` to control the sinusoidal oscillation of the `translateY` attribute of `cube`. Keying the `frequency` attribute of the controller will create the desired speeding-up-and-slowing-down behavior in the cube.
 
-This expression works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
+Lets map the components of our Maya scene to the elements of $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. Our $t$ is the frame number, our $\omega (t)$ is the `oscillation_controller.frequency` attribute's animation curve, our $g(t)$ is $\sin (t)$, and our $f(t)$ controls `cube.translateY`.
+
+The expression in this scene works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
 
 Unfortunately, this method creates some major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
 
