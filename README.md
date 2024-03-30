@@ -4,7 +4,7 @@ A function for varying the frequency of an oscillating function over time, some 
 
 ## The Function
 
-Let's say we have a function $f(t)$ that we're using to animate the position of an object over time. If we wanted to make the object bounce up and down, we could model that using $f(t) = sin(\omega t)$, where $t$ is the current time and $\omega$ is the angular frequency (which defines how fast the object oscillates):
+Let's say we have a function $f(t)$ that we're using to animate the position of an object over time. If we wanted to make the object bounce up and down, we could model that using $f(t) = \sin(\omega t)$, where $t$ is the current time and $\omega$ is the angular frequency (which defines how fast the object oscillates):
 
 ![alt text](assets/SimpleSine_ManimCE_v0.18.0.gif)
 
@@ -12,7 +12,7 @@ This works fine when $\omega$ is constant, but what if we want to make the objec
 
 ![alt text](assets/MysteryFunction_ManimCE_v0.18.0.gif)
 
-Now we have a new question: how should we define $f(t)$? The first thing we could try is plugging $\omega (t)$ into the function we had before, which would give us $f(t) = sin(\omega (t) \cdot t)$. However, doing so gives us some unwanted behavior:
+Now we have a new question: how should we define $f(t)$? The first thing we could try is plugging $\omega (t)$ into the function we had before, which would give us $f(t) = \sin(\omega (t) \cdot t)$. However, doing so gives us some unwanted behavior:
 
 ![alt text](assets/BadFunction_ManimCE_v0.18.0.gif)
 
@@ -20,7 +20,7 @@ When the value of $\omega (t)$ is constant, $f(t)$ behaves the way we want it to
 
 ![alt text](assets/BadFunctionExplanation_ManimCE_v0.18.0.gif)
 
-When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. If we want to vary $\omega$ over time, we're going to need to find a different function.
+When $\omega (t)$ is constant, $\omega(t) \cdot t$ increases linearly with $t$. But once $\omega (t)$ starts increasing too, it multiplies with the already increasing $t$ to create a significant jump in the overall rate of change of $\omega(t)\cdot t$. The function $f(t) = \sin(\omega t)$ is only able to model oscillating motion when $\omega$ is constant. If we want to vary $\omega$ over time, we're going to need to find a different function.
 
 In order to do this, it can be helpful to change how we think about the effect that $\omega$ has on $f(t)$. A common way of understanding $\omega$ is to think of it as controlling the "stretchiness" of the function. Lower $\omega$ values expand it, resulting in slower oscillation, and higher $\omega$ values compress it, resulting in faster oscillation:
 
@@ -34,7 +34,7 @@ This way of thinking about $\omega$ is a bit more convoluted than the stretchine
 
 If $\omega (t)$ represents the rate at which we're traversing the horizontal axis, then $\int_{0}^t \omega (t) \\, dt$ represents the current horizontal position at time $t$. That essentially means that $\int_{0}^t \omega (t) \\, dt$ is an expression that tells us what number to plug in to our oscillating function in order to model a changing $\omega$. In other words, it's our solution:
 
-$$ f(t) =sin(\int_{0}^t \omega (t) \\, dt) $$
+$$ f(t) =\sin(\int_{0}^t \omega (t) \\, dt) $$
 
 Now we can revisit our examples from before with our new definition for $f(t)$. If we look at how $\int_{0}^t \omega (t) \\, dt$ changes over time, we see a smooth transition instead of the sharp one that $\omega (t) \cdot t$ yielded:
 
@@ -49,12 +49,12 @@ $$\omega(t) = \omega_1$$
 Then $\int_{0}^t \omega (t) \\, dt$ evaluates as follows:
 $$\int_{0}^t \omega (t) \\, dt = \int_{0}^t \omega_1 \\, dt = \omega_1t$$
 So we end up with:
-$$f(t) =sin(\int_{0}^t \omega (t) \\, dt) = sin(\omega_1t)$$
-Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=sin(\omega t)$ a special case of the more general function $f(t) =sin(\int_{0}^t \omega (t) \\, dt)$ when $\omega(t)$ is constant.
+$$f(t) =\sin(\int_{0}^t \omega (t) \\, dt) = \sin(\omega_1t)$$
+Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=\sin(\omega t)$ a special case of the more general function $f(t) =\sin(\int_{0}^t \omega (t) \\, dt)$ when $\omega(t)$ is constant.
 
 ## Applications
 
-While I used $sin$ as an example, this solution can apply to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
+While I used $\sin$ as an example, this solution can apply to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed:
 
 $$f(t) =g(\int_{0}^t \omega (t) \\, dt)$$
 
@@ -84,12 +84,14 @@ The simplest workaround for this performance issue is to bake the animation when
 
 This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all animations in the scene.
 
-A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached and only recalculated when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than ten seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
+A more performant solution to this problem would be to implement a system that allows the summed `frequency` values to be cached and only recalculated when the animation curve controlling the `frequency` is changed. However, as far as I'm aware this sort of functionality is beyond the scope of what can be accomplished with an expression and introduces a significant amount of complexity to this tool. For my use case (individual shots of a film split into separate Maya scenes that are usually less than fifteen seconds long), the simplicity of this expression outweighs the performance issues that one would run into in longer and heavier scenes.
 
 ## Summary
 
+The function $f_a(t) = \sin(\omega t)$, where $\omega$ is the angular frequency and $t$ is time, can be used to model oscillating motion. However, it only works if $\omega$ is constant. If $\omega$ is instead a function $\omega (t)$, then the motion is represented by $ f_b(t) =\sin(\int_{0}^t \omega (t) \\, dt) $. The original function, $f_a(t) = \sin(\omega t)$, is a special case of $f_b(t)$ for constant $\omega (t)$.
 
+This function can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. This allows for the dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and allows animations to be reversed in real-time.
 
-Add a link to the interactive desmos graph somewhere
+This repository contains a file `oscillate-demo.ma` that contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (t) \\, dt$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
 
-Make sure the expression is presentable 
+[If you would like to explore this function interactively, I have built a interactive demo using Desmos](https://www.desmos.com/calculator/jrbopevuwd)

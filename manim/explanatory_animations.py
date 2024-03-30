@@ -6,6 +6,10 @@ AXIS_LENGTH = 8 * PI
 TIME_LENGTH = 10
 RIEMANN_STEP = 0.01
 
+# Output settings:
+# PNG Sequence: manim render -a --format png --fps 24 -r 1920,1080 .\manim\explanatory_animations.py
+# Gif: manim render -a --format gif --quality l .\manim\explanatory_animations.py
+
 
 def piecewise(a, b, f1, f2, t):
     """Piecewise function that is constant until (a, f1), then ramps to (b, f2)"""
@@ -148,9 +152,9 @@ class SimpleSine(Scene):
 
         graph_and_dot.move_to(ORIGIN)
 
-        title = MathTex(r"f(t)=sin(\omega t)").next_to(graph_and_dot,
-                                                       DOWN,
-                                                       buff=0.2)
+        title = MathTex(r"f(t)=\sin(\omega t)").next_to(graph_and_dot,
+                                                        DOWN,
+                                                        buff=0.2)
 
         title2 = MathTex(r"\omega = 1").next_to(title, DOWN)
 
@@ -250,7 +254,7 @@ class MysteryFunctionLabeled(Scene):
         tracker = ValueTracker(0.01)
 
         f_graph = build_animated_graph(
-            MathTex(r"f(t) =sin(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            MathTex(r"f(t) =\sin(\int_{0}^t \omega (t) \, dt)").scale(0.75),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -311,18 +315,18 @@ class NoiseFunctionLabeled(Scene):
         def noise_func(x):
             return 3 * noise(0.3 * good_solution_integrate(x))
 
-        f_graph = build_animated_graph(
-            MathTex(r"f(t) =noise(\int_{0}^t \omega (t) \, dt)").scale(0.75),
-            noise_func,
-            tracker,
-            x_range=[0, AXIS_LENGTH, 1],
-            x_length=4,
-            y_range=[-2, 2, 1],
-            y_length=3,
-            axis_config={
-                'include_ticks': False,
-                'include_tip': False
-            })
+        f_graph = build_animated_graph(MathTex(
+            r"f(t) =\text{noise}(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+                                       noise_func,
+                                       tracker,
+                                       x_range=[0, AXIS_LENGTH, 1],
+                                       x_length=4,
+                                       y_range=[-2, 2, 1],
+                                       y_length=3,
+                                       axis_config={
+                                           'include_ticks': False,
+                                           'include_tip': False
+                                       })
 
         ball = build_bouncing_ball(noise_func,
                                    tracker,
@@ -376,18 +380,18 @@ class NoiseFunctionBounce(Scene):
         def noise_func(x: float) -> float:
             return 3 * noise(0.3 * integrate(x, bounce))
 
-        f_graph = build_animated_graph(
-            MathTex(r"f(t) =noise(\int_{0}^t \omega (t) \, dt)").scale(0.75),
-            noise_func,
-            tracker,
-            x_range=[0, AXIS_LENGTH, 1],
-            x_length=4,
-            y_range=[-2, 2, 1],
-            y_length=3,
-            axis_config={
-                'include_ticks': False,
-                'include_tip': False
-            })
+        f_graph = build_animated_graph(MathTex(
+            r"f(t) = \text{noise}(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+                                       noise_func,
+                                       tracker,
+                                       x_range=[0, AXIS_LENGTH, 1],
+                                       x_length=4,
+                                       y_range=[-2, 2, 1],
+                                       y_length=3,
+                                       axis_config={
+                                           'include_ticks': False,
+                                           'include_tip': False
+                                       })
 
         ball = build_bouncing_ball(noise_func,
                                    tracker,
@@ -435,7 +439,7 @@ class BadFunction(Scene):
         tracker = ValueTracker(0.01)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(\omega(t) \cdot t)").scale(0.8),
+            MathTex(r"f(t) = \sin(\omega(t) \cdot t)").scale(0.8),
             bad_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -509,7 +513,7 @@ class BadFunctionExplanation(Scene):
             }).next_to(omega_graph, RIGHT, buff=0.5)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(\omega (t) \cdot t)").scale(0.8),
+            MathTex(r"f(t) = \sin(\omega (t) \cdot t)").scale(0.8),
             bad_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -562,7 +566,7 @@ class GoodFunctionExplanation(Scene):
             }).next_to(omega_graph, RIGHT, buff=0.5)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(g(t))").scale(0.8),
+            MathTex(r"f(t) = \sin(g(t))").scale(0.8),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -615,7 +619,7 @@ class GoodFunctionExplanationLabeled(Scene):
             }).next_to(omega_graph, RIGHT, buff=0.5)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = sin(\int_{0}^t \omega (t) \, dt)").scale(0.8),
+            MathTex(r"f(t) = \sin(\int_{0}^t \omega (t) \, dt)").scale(0.8),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
