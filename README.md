@@ -26,7 +26,7 @@ In order to do this, it can be helpful to change how we think about the effect t
 
 ![alt text](assets/ExpandContract_ManimCE_v0.18.0.gif)
 
-However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $f(t)$. The graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
+However, we can also think of $\omega$ as setting the rate at which we traverse the horizontal axis when evaluating $f(t)$. This graph of $f(t)$ is modelled differently, but the final outcome for the oscillating object is the same:
 
 ![alt text](assets/SpeedVariation_ManimCE_v0.18.0.gif)
 
@@ -40,7 +40,7 @@ Now we can revisit our examples from before with our new definition for $f(t)$. 
 
 ![alt text](assets/GoodFunctionExplanationLabeled_ManimCE_v0.18.0.gif)
 
-And when we apply this animation to our oscillating object, we get the desired result:
+And when we apply this function to our oscillating object, we get the desired result:
 
 ![alt text](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
 
@@ -50,7 +50,7 @@ Then $\int_{0}^t \omega (t) \\, dt$ evaluates as follows:
 $$\int_{0}^t \omega (t) \\, dt = \int_{0}^t \omega_1 \\, dt = \omega_1t$$
 So we end up with:
 $$f(t) =\sin(\int_{0}^t \omega (t) \\, dt) = \sin(\omega_1t)$$
-Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=\sin(\omega t)$ a special case of the more general function $f(t) =\sin(\int_{0}^t \omega (t) \\, dt)$ when $\omega(t)$ is constant.
+Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=\sin(\omega t)$ a special case of the more general function $f(t) =\sin(\int_{0}^t \omega (t) \\, dt)$ for constant $\omega(t)$.
 
 ## Applications
 
@@ -76,11 +76,11 @@ The Maya scene `oscillate-demo.ma` contains an example of how one could implemen
 
 This expression works by querying the value of the `frequency` attribute on every frame and using that information to take a Riemann sum of the `frequency` attribute's animation curve to approximate the integral $\int_{0}^t \omega (t) \\, dt$.
 
-This expression works, but it has major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
+Unfortunately, this method creates some major performance drawbacks. It requires an increasing amount of queries to the value of `frequency` as the frame count gets higher. For every single frame of animation, all of the `frequency` values of the preceding frames must be summed together to approximate the current value of  $\int_{0}^t \omega (t) \\, dt$. Frame $3$ requires the values at frames $2$ and $1$ to be summed, frame $4$ requries the values at $3$, $2$, and $1$ to be summed, and so on. This isn't an issue for short animations, but as animations get longer, the number of total operations needed to calculate the animation increases quadratically, ultimately creating a program that runs in $O(n^2)$ time (where $n$ is the number of frames):
 
-$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} $$
+$$ \sum_{t=1}^n t = \frac{n(n+1)}{2} = \frac{n^2+n}{2} = O(n)$$
 
-The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the effects the performance of this expression would have on the rest of the project, but that doesn't do anything to speed up the expression while it's actually running.
+The simplest workaround for this performance issue is to bake the animation when it's finished to mitigate the performance effects this expression would have on the rest of the project. However, that doesn't do anything to speed up the expression while it's actually running.
 
 This expression also requires Maya's cached playback to be disabled, which significantly hurts the performance of all animations in the scene.
 
@@ -88,10 +88,10 @@ A more performant solution to this problem would be to implement a system that a
 
 ## Summary
 
-The function $f_a(t) = \sin(\omega t)$, where $\omega$ is the angular frequency and $t$ is time, can be used to model oscillating motion. However, it only works if $\omega$ is constant. If $\omega$ is instead a function $\omega (t)$, then the motion is represented by $ f_b(t) =\sin(\int_{0}^t \omega (t) \\, dt) $. The original function, $f_a(t) = \sin(\omega t)$, is a special case of $f_b(t)$ for constant $\omega (t)$.
+The function $f_a(t) = \sin(\omega t)$, where $\omega$ is the angular frequency and $t$ is time, can be used to model oscillating motion. However, it only works if $\omega$ is constant. If $\omega$ is instead a function $\omega (t)$, then the motion is represented by $f_b(t) =\sin(\int_{0}^t \omega (t) \\, dt)$. The original function, $f_a(t) = \sin(\omega t)$, is a special case of $f_b(t)$ for constant $\omega (t)$.
 
-This function can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. This allows for the dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and allows animations to be reversed in real-time.
+This solution can then be generalized to any function that animates over time. For any continuous function $g(t)$, an integrable function $\omega(t)$ can be used to change the rate at which $g(t)$ is traversed using the function $f(t) =g(\int_{0}^t \omega (t) \\, dt)$. This has applications including dynamic control of the frequency of noise functions, dynamic control over the rate at which animation curves are executed, and the reversal of animations in real-time.
 
-This repository contains a file `oscillate-demo.ma` that contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (t) \\, dt$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
+The file `oscillate-demo.ma` contains a simple example of how one could implement this function using a Maya expression. However, the calculation of $\int_{0}^t \omega (t) \\, dt$ creates performance issues in larger scenes and a more robust solution would most likely need some sort of caching system.
 
 [If you would like to explore this function interactively, I have built a interactive demo using Desmos](https://www.desmos.com/calculator/jrbopevuwd)
