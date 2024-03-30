@@ -254,7 +254,7 @@ class MysteryFunctionLabeled(Scene):
         tracker = ValueTracker(0.01)
 
         f_graph = build_animated_graph(
-            MathTex(r"f(t) =\sin(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            MathTex(r"f(t) =\sin(\int_{0}^t \omega (x) \, dx)").scale(0.75),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -316,7 +316,7 @@ class NoiseFunctionLabeled(Scene):
             return 3 * noise(0.3 * good_solution_integrate(x))
 
         f_graph = build_animated_graph(MathTex(
-            r"f(t) =\text{noise}(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            r"f(t) =\text{noise}(\int_{0}^t \omega (x) \, dx)").scale(0.75),
                                        noise_func,
                                        tracker,
                                        x_range=[0, AXIS_LENGTH, 1],
@@ -381,7 +381,7 @@ class NoiseFunctionBounce(Scene):
             return 3 * noise(0.3 * integrate(x, bounce))
 
         f_graph = build_animated_graph(MathTex(
-            r"f(t) = \text{noise}(\int_{0}^t \omega (t) \, dt)").scale(0.75),
+            r"f(t) = \text{noise}(\int_{0}^t \omega (x) \, dx)").scale(0.75),
                                        noise_func,
                                        tracker,
                                        x_range=[0, AXIS_LENGTH, 1],
@@ -606,7 +606,7 @@ class GoodFunctionExplanationLabeled(Scene):
                                            })
 
         omega_graph_exp = build_animated_graph(
-            MathTex("\int_{0}^t \omega (t) \, dt").scale(0.9),
+            MathTex("\int_{0}^t \omega (x) \, dx").scale(0.9),
             good_solution_integrate,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
@@ -619,7 +619,7 @@ class GoodFunctionExplanationLabeled(Scene):
             }).next_to(omega_graph, RIGHT, buff=0.5)
 
         bad_graph = build_animated_graph(
-            MathTex(r"f(t) = \sin(\int_{0}^t \omega (t) \, dt)").scale(0.8),
+            MathTex(r"f(t) = \sin(\int_{0}^t \omega (x) \, dx)").scale(0.8),
             good_solution,
             tracker,
             x_range=[0, AXIS_LENGTH, 1],
