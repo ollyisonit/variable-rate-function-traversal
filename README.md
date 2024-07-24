@@ -1,5 +1,7 @@
 # Variable Rate Function Traversal
 
+![](icon.gif)
+
 A method for changing the rate at which a function (such as an animation curve) is traversed over time, some of its applications, and a Maya expression that implements it.
 
 ## The Setup
