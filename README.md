@@ -46,12 +46,20 @@ And when we apply this function to our oscillating object, we get the desired re
 
 ![Animation of sine function with increasing frequency as defined by f(t)](assets/MysteryFunctionLabeled_ManimCE_v0.18.0.gif)
 
-As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. Let's make $\omega(t)$ a constant function:
+As an additional way to check our work, we can look at how our new function reacts if $\omega(t)$ is constant. 
+
+Let's make $\omega(t)$ a constant function:
+
 $$\omega(t) = \omega_1$$
+
 Then $\int_{0}^t \omega (x) \\, dx$ evaluates as follows:
+
 $$\int_{0}^t \omega (x) \\, dx = \int_{0}^t \omega_1 \\, dx = \omega_1t$$
+
 So we end up with:
+
 $$f(t) =\sin(\int_{0}^t \omega (x) \\, dx) = \sin(\omega_1t)$$
+
 Which is the same function that we started with when $\omega$ was constant. This makes $f(t)=\sin(\omega t)$ a special case of the more general function $f(t) =\sin(\int_{0}^t \omega (x) \\, dx)$ for constant $\omega(t)$.
 
 ## The General Solution and Some Applications
